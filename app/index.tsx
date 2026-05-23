@@ -7,9 +7,16 @@ export default function HomeScreen() {
     <ScrollView className="flex-1 bg-[#0a0f14]">
       <View className="p-6 pt-12">
         {/* Header */}
-        <View className="items-center mb-8">
-          <Text className="text-5xl font-bold text-white tracking-widest">FORGEFIT</Text>
-          <Text className="text-[#c5a46e] text-xl mt-1 tracking-[4px]">TRAIN LIKE A WARRIOR</Text>
+        <View className="flex-row justify-between items-center mb-8">
+          <View>
+            <Text className="text-5xl font-bold text-white tracking-widest">FORGEFIT</Text>
+            <Text className="text-[#c5a46e] text-xl mt-1 tracking-[4px]">TRAIN LIKE A WARRIOR</Text>
+          </View>
+          <Link href="/login" asChild>
+            <Pressable className="bg-[#121a24] px-5 py-2.5 rounded-full border border-[#c5a46e]/40">
+              <Text className="text-[#c5a46e] font-bold tracking-widest text-sm">LOGIN</Text>
+            </Pressable>
+          </Link>
         </View>
 
         {/* Hero */}
