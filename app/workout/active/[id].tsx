@@ -1,12 +1,14 @@
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, Pressable, ScrollView, Alert } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
 import { useState, useEffect } from 'react';
 import { workouts } from '../../../data/workouts';
+import { useWorkoutStore } from '../../../store/useWorkoutStore';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function ActiveWorkout() {
   const { id } = useLocalSearchParams();
   const workout = workouts.find(w => w.id === id);
+  const { addCompletedWorkout, incrementStreak } = useWorkoutStore();
 
   const [time, setTime] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
@@ -37,8 +39,17 @@ export default function ActiveWorkout() {
   };
 
   const finishWorkout = () => {
-    // TODO: Save to history later
-    router.push('/workouts');
+    if (workout) {
+      addCompletedWorkout(workout.id);
+      if (completedExercises.length > 3) {
+        incrementStreak();
+      }
+    }
+    Alert.alert(
+      'Mission Complete!',
+      `Great work, warrior! You completed ${completedExercises.length} exercises.`,
+      [{ text: 'RETURN TO BASE', onPress: () => router.push('/workouts') }]
+    );
   };
 
   if (!workout) return <Text className="text-white p-6">Workout not found</Text>;
