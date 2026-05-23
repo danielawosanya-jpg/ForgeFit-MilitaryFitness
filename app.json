@@ -15,13 +15,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.danielawosanya.forgefit"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0a0f14"
-      }
+      },
+      "package": "com.danielawosanya.forgefit"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -29,6 +31,11 @@
     "plugins": [
       "expo-router"
     ],
-    "scheme": "forgefit"
+    "scheme": "forgefit",
+    "extra": {
+      "eas": {
+        "projectId": "your-project-id-here"
+      }
+    }
   }
 }
