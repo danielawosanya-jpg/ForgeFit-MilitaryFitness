@@ -14,10 +14,12 @@ export interface CompletedWorkout {
 interface WorkoutStore {
   completedWorkouts: CompletedWorkout[];
   streak: number;
+  lastSynced: string | null;
   addCompletedWorkout: (workout: CompletedWorkout) => void;
   incrementStreak: () => void;
   resetProgress: () => void;
   markAsSynced: (workoutId: string, date: string) => void;
+  setLastSynced: (timestamp: string) => void;
 }
 
 export const useWorkoutStore = create<WorkoutStore>()(
@@ -25,6 +27,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
     (set) => ({
       completedWorkouts: [],
       streak: 12,
+      lastSynced: null,
       addCompletedWorkout: (workout) =>
         set((state) => ({
           completedWorkouts: [{ ...workout, synced: false }, ...state.completedWorkouts],
@@ -37,6 +40,7 @@ export const useWorkoutStore = create<WorkoutStore>()(
             w.id === workoutId && w.date === date ? { ...w, synced: true } : w
           ),
         })),
+      setLastSynced: (timestamp) => set({ lastSynced: timestamp }),
     }),
     {
       name: 'forgefit-storage',
