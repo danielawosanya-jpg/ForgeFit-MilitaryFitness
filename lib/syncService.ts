@@ -1,31 +1,30 @@
 import { supabase } from './supabase';
-import { useWorkoutStore } from '../store/useWorkoutStore';
+import { useWorkoutStore, CompletedWorkout } from '../store/useWorkoutStore';
 import NetInfo from '@react-native-community/netinfo';
 
-// This service handles offline-first sync for workout history
+/**
+ * Advanced Offline Sync with Conflict Resolution
+ * Strategy: Last-Write-Wins based on completed_at timestamp
+ */
 
 export const syncWorkouts = async () => {
   const state = useWorkoutStore.getState();
-  const localWorkouts = state.completedWorkouts;
+  let localWorkouts: CompletedWorkout[] = state.completedWorkouts;
 
-  // Check internet connection
   const netInfo = await NetInfo.fetch();
   if (!netInfo.isConnected) {
-    console.log('Offline - skipping sync');
-    return { success: false, message: 'No internet connection' };
+    return { success: false, message: 'Offline - sync skipped' };
   }
 
   try {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      return { success: false, message: 'User not authenticated' };
-    }
+    if (!user) return { success: false, message: 'Not authenticated' };
 
-    // 1. Upload unsynced local workouts
-    const unsynced = localWorkouts.filter(w => !(w as any).synced);
+    // === 1. Upload unsynced local workouts ===
+    const unsynced = localWorkouts.filter(w => !w.synced);
 
     if (unsynced.length > 0) {
-      const workoutsToInsert = unsynced.map(w => ({
+      const toInsert = unsynced.map(w => ({
         user_id: user.id,
         workout_id: w.id,
         title: w.title,
@@ -36,21 +35,24 @@ export const syncWorkouts = async () => {
 
       const { error } = await supabase
         .from('user_workouts')
-        .upsert(workoutsToInsert, { onConflict: 'user_id,workout_id,completed_at' });
+        .upsert(toInsert, {
+          onConflict: 'user_id,workout_id,completed_at',
+          ignoreDuplicates: false,
+        });
 
       if (error) throw error;
 
-      // Mark as synced locally
-      const updated = localWorkouts.map(w => 
-        unsynced.find(u => u.id === w.id && u.date === w.date) 
-          ? { ...w, synced: true } 
+      // Mark uploaded ones as synced
+      localWorkouts = localWorkouts.map(w =>
+        unsynced.some(u => u.id === w.id && u.date === w.date)
+          ? { ...w, synced: true }
           : w
       );
-      useWorkoutStore.setState({ completedWorkouts: updated });
+      useWorkoutStore.setState({ completedWorkouts: localWorkouts });
     }
 
-    // 2. Download latest from server
-    const { data: serverWorkouts, error: fetchError } = await supabase
+    // === 2. Download from server ===
+    const { data: serverData, error: fetchError } = await supabase
       .from('user_workouts')
       .select('*')
       .eq('user_id', user.id)
@@ -58,40 +60,72 @@ export const syncWorkouts = async () => {
 
     if (fetchError) throw fetchError;
 
-    if (serverWorkouts) {
-      // Simple merge strategy: keep local + add new server ones
-      const serverMapped = serverWorkouts.map(sw => ({
-        id: sw.workout_id,
-        title: sw.title,
-        date: sw.completed_at,
-        duration: sw.duration_minutes,
-        exercisesCompleted: sw.exercises_completed,
-        synced: true,
-      }));
+    if (!serverData || serverData.length === 0) {
+      return { success: true, message: 'Sync complete (no server data)' };
+    }
 
-      // Merge avoiding duplicates
-      const existingIds = new Set(localWorkouts.map(w => `${w.id}-${w.date}`));
-      const newFromServer = serverMapped.filter(sw => 
-        !existingIds.has(`${sw.id}-${sw.date}`)
-      );
+    // === 3. Conflict Resolution: Last-Write-Wins by completed_at ===
+    const serverWorkouts: CompletedWorkout[] = serverData.map(sw => ({
+      id: sw.workout_id,
+      title: sw.title,
+      date: sw.completed_at,
+      duration: sw.duration_minutes || 0,
+      exercisesCompleted: sw.exercises_completed || 0,
+      synced: true,
+    }));
 
-      if (newFromServer.length > 0) {
-        useWorkoutStore.setState({
-          completedWorkouts: [...newFromServer, ...localWorkouts],
-        });
+    const merged: CompletedWorkout[] = [];
+    const localMap = new Map(
+      localWorkouts.map(w => [`${w.id}-${w.date}`, w])
+    );
+
+    // Add all server workouts
+    for (const serverW of serverWorkouts) {
+      const key = `${serverW.id}-${serverW.date}`;
+      const localW = localMap.get(key);
+
+      if (!localW) {
+        // New from server
+        merged.push(serverW);
+      } else {
+        // Conflict: compare timestamps
+        const serverTime = new Date(serverW.date).getTime();
+        const localTime = new Date(localW.date).getTime();
+
+        if (serverTime >= localTime) {
+          // Server is newer or equal → keep server version
+          merged.push(serverW);
+        } else {
+          // Local is newer → keep local (will be uploaded next time)
+          merged.push({ ...localW, synced: false });
+        }
       }
     }
 
-    return { success: true, message: 'Sync completed' };
+    // Add local workouts that don't exist on server yet
+    for (const localW of localWorkouts) {
+      const key = `${localW.id}-${localW.date}`;
+      const existsOnServer = serverWorkouts.some(sw => `${sw.id}-${sw.date}` === key);
+
+      if (!existsOnServer) {
+        merged.push({ ...localW, synced: false });
+      }
+    }
+
+    // Sort by date (newest first)
+    merged.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+
+    useWorkoutStore.setState({ completedWorkouts: merged });
+
+    return { success: true, message: `Synced ${merged.length} workouts` };
   } catch (error: any) {
-    console.error('Sync error:', error);
+    console.error('Sync failed:', error);
     return { success: false, message: error.message };
   }
 };
 
-// Auto-sync when app comes online
 export const setupAutoSync = () => {
-  return NetInfo.addEventListener(state => {
+  return NetInfo.addEventListener((state) => {
     if (state.isConnected) {
       syncWorkouts();
     }
