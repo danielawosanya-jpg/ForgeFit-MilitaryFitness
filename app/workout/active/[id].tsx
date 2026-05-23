@@ -40,15 +40,22 @@ export default function ActiveWorkout() {
 
   const finishWorkout = () => {
     if (workout) {
-      addCompletedWorkout(workout.id);
+      const completedWorkout = {
+        id: workout.id,
+        title: workout.title,
+        date: new Date().toISOString(),
+        duration: Math.floor(time / 60),
+        exercisesCompleted: completedExercises.length,
+      };
+      addCompletedWorkout(completedWorkout);
       if (completedExercises.length > 3) {
         incrementStreak();
       }
     }
     Alert.alert(
       'Mission Complete!',
-      `Great work, warrior! You completed ${completedExercises.length} exercises.`,
-      [{ text: 'RETURN TO BASE', onPress: () => router.push('/workouts') }]
+      `Great work, warrior! You completed ${completedExercises.length} exercises in ${formatTime(time)}.`,
+      [{ text: 'RETURN TO BASE', onPress: () => router.push('/(tabs)') }]
     );
   };
 
