@@ -2,93 +2,78 @@
 
 **ForgeFit** is a premium military-inspired fitness application built for everyone who wants to train like a soldier. Discipline. Grit. Results.
 
-## Features (MVP Roadmap)
+## ✅ Current Features (MVP v1.5)
 
-- 💪 Military-style workouts (bootcamp circuits, calisthenics, HIIT, rucking)
-- 📅 Daily/Weekly structured programs
-- 📊 Progress tracking & personal records
-- 💳 Subscription model (Free + Premium)
-- 🎥 Exercise video demos (placeholders)
-- 🏆 Challenges & leaderboards
-- 🔒 Secure auth + payments (Supabase + Stripe)
+- 💪 **Military-style workouts** (3 programs: Daily Grinder, Tactical Circuit, Elite Beast)
+- ⏱️ **Live workout timer** + tap-to-complete exercises
+- 🔐 **Authentication** (Supabase Login + Sign Up)
+- 💳 **Subscription screen** (Premium upgrade UI)
+- 🎨 Beautiful dark tactical military theme
 
 ## Tech Stack
 
-- React Native + Expo
+- React Native + Expo (Expo Router)
 - TypeScript
 - NativeWind (Tailwind CSS)
-- Zustand (state management)
-- Supabase (auth, database, realtime)
-- Stripe (subscriptions)
+- Supabase (Auth ready)
+- Zustand (future state)
 
 ## Getting Started
 
-### Prerequisites
-- Node.js 18+
-- Expo CLI / Expo Go app
-
-### Installation
+### 1. Clone & Install
 
 ```bash
-# Clone the repo
 git clone https://github.com/danielawosanya-jpg/ForgeFit-MilitaryFitness.git
 cd ForgeFit-MilitaryFitness
-
-# Install dependencies
 npm install
+```
 
-# Start the app
+### 2. Supabase Setup (Required for Auth)
+
+1. Go to [supabase.com](https://supabase.com) and create a new project
+2. Copy your **Project URL** and **anon public key**
+3. Create `.env` file in the root:
+
+```env
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+```
+
+4. Install Supabase client:
+```bash
+npx expo install @supabase/supabase-js @react-native-async-storage/async-storage react-native-url-polyfill
+```
+
+### 3. Run the App
+
+```bash
 npx expo start
 ```
 
-### Run on Device
-1. Install **Expo Go** on your phone
-2. Scan the QR code from terminal
+Scan the QR with **Expo Go**.
 
 ## Project Structure
 
 ```
-ForgeFit/
-├── app/                 # Expo Router screens
-├── components/          # Reusable UI components
-├── constants/           # Theme, colors, military ranks
-├── data/                # Workout database
-├── hooks/               # Custom hooks
-├── utils/               # Helpers
-├── assets/
-├── package.json
-├── app.json
-└── README.md
+app/
+├── index.tsx              # Home
+├── login.tsx              # Login
+├── signup.tsx             # Sign Up
+├── workouts.tsx           # Mission Briefing
+├── workout/[id].tsx       # Workout Detail
+├── workout/active/[id].tsx # Live Timer + Completion
+├── subscription.tsx       # Premium
+lib/supabase.ts            # Supabase client
 ```
-
-## Subscription Tiers
-
-| Tier     | Price          | Features                          |
-|----------|----------------|-----------------------------------|
-| Free     | $0             | Basic workouts, limited tracking  |
-| Premium  | $9.99/mo or $79/yr | Full programs, progress, challenges, video library |
-
-## Military Workout Philosophy
-
-Train like the armed forces:
-- High volume bodyweight
-- Functional strength
-- Mental toughness
-- Progressive overload
-- No excuses
 
 ## Roadmap
 
-- [ ] Authentication (Supabase)
-- [ ] Workout logging & history
-- [ ] Subscription integration (Stripe)
-- [ ] Leaderboards
-- [ ] Ruck marching tracker
-- [ ] Nutrition integration
-
-## Contributing
-
-Pull requests welcome! This is an open project to help people get fit with military discipline.
+- [x] Live workout timer + exercise completion
+- [x] Supabase Authentication
+- [ ] Workout history & progress saving
+- [ ] Stripe subscription payments
+- [ ] Profile & military rank system
+- [ ] More workouts & challenges
 
 **Built with grit by Daniel & Grok**
 
