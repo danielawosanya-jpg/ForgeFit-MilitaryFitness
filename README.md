@@ -23,34 +23,25 @@
 
 ## Getting Started
 
-### 1. Clone the repo
+### Recommended Local Folder
+
+Clone the repo into a folder named `forgefit`:
+
 ```bash
-git clone https://github.com/danielawosanya-jpg/ForgeFit-MilitaryFitness.git
-cd ForgeFit-MilitaryFitness
+git clone https://github.com/danielawosanya-jpg/ForgeFit-MilitaryFitness.git forgefit
+cd forgefit
+```
+
+See `SETUP.md` for the full recommended folder structure and quick start commands.
+
+### Quick Start
+
+```bash
 npm install
-```
 
-### 2. Add the Icons
-Place the three generated icon files in the `assets/` folder:
-- `icon.png`
-- `splash-icon.png`
-- `adaptive-icon.png`
+# Add icons to assets/
+# Create .env with your Supabase keys
 
-### 3. Supabase Setup
-1. Create a project at [supabase.com](https://supabase.com)
-2. Run the SQL from `SUPABASE_SETUP.md`
-3. Create a `.env` file:
-```env
-EXPO_PUBLIC_SUPABASE_URL=your-url
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your-key
-```
-4. Install packages:
-```bash
-npx expo install @supabase/supabase-js @react-native-async-storage/async-storage react-native-url-polyfill @react-native-community/netinfo
-```
-
-### 4. Run the app
-```bash
 npx expo start
 ```
 
