@@ -61,6 +61,8 @@ export const syncWorkouts = async () => {
     if (fetchError) throw fetchError;
 
     if (!serverData || serverData.length === 0) {
+      const now = new Date().toISOString();
+      useWorkoutStore.getState().setLastSynced(now);
       return { success: true, message: 'Sync complete (no server data)' };
     }
 
@@ -115,7 +117,8 @@ export const syncWorkouts = async () => {
     // Sort by date (newest first)
     merged.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
-    useWorkoutStore.setState({ completedWorkouts: merged });
+    const now = new Date().toISOString();
+    useWorkoutStore.setState({ completedWorkouts: merged, lastSynced: now });
 
     return { success: true, message: `Synced ${merged.length} workouts` };
   } catch (error: any) {
