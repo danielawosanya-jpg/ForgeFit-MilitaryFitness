@@ -1,6 +1,19 @@
-import { View, Text, Pressable, ScrollView } from 'react-native';
+import { View, Text, Pressable, ScrollView, Linking, Alert } from 'react-native';
 
 export default function SubscriptionScreen() {
+
+  const handleSubscribe = async () => {
+    // TODO: Replace with your real Stripe Checkout / Payment Link
+    const stripeCheckoutUrl = 'https://buy.stripe.com/test_xxxxxx'; // <-- Replace with your Stripe link
+
+    const supported = await Linking.canOpenURL(stripeCheckoutUrl);
+    if (supported) {
+      await Linking.openURL(stripeCheckoutUrl);
+    } else {
+      Alert.alert('Error', 'Could not open payment page');
+    }
+  };
+
   return (
     <ScrollView className="flex-1 bg-[#0a0f14]">
       <View className="p-6 pt-12">
@@ -23,11 +36,12 @@ export default function SubscriptionScreen() {
           <View className="space-y-4 mb-8">
             {[
               "Unlimited access to all programs",
-              "Advanced progress tracking",
+              "Advanced progress tracking & history",
               "Video exercise library",
               "Custom workout builder",
               "Weekly challenges & leaderboards",
               "Rucking & outdoor missions",
+              "Priority support",
             ].map((feature, i) => (
               <View key={i} className="flex-row items-center">
                 <Text className="text-[#c5a46e] mr-3 text-xl">✓</Text>
@@ -36,14 +50,17 @@ export default function SubscriptionScreen() {
             ))}
           </View>
 
-          <Pressable className="bg-[#c5a46e] py-5 rounded-2xl active:opacity-90">
-            <Text className="text-[#0a0f14] text-center text-xl font-extrabold tracking-[2px]">SUBSCRIBE NOW</Text>
+          <Pressable 
+            onPress={handleSubscribe}
+            className="bg-[#c5a46e] py-5 rounded-2xl active:opacity-90"
+          >
+            <Text className="text-[#0a0f14] text-center text-xl font-extrabold tracking-[2px]">SUBSCRIBE WITH STRIPE</Text>
           </Pressable>
 
           <Text className="text-center text-[#a0aec0] mt-4 text-sm">or $79/year (save 34%)</Text>
         </View>
 
-        <Text className="text-center text-[#4a5568] text-xs tracking-widest mt-4">CANCEL ANYTIME • SECURE PAYMENT</Text>
+        <Text className="text-center text-[#4a5568] text-xs tracking-widest mt-4">CANCEL ANYTIME • SECURE PAYMENT VIA STRIPE</Text>
       </View>
     </ScrollView>
   );
