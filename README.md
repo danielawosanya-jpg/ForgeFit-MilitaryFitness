@@ -1,81 +1,70 @@
-# 🛡️ ForgeFit - Military Style Fitness App
+# 🛡️ ForgeFit – Military Style Fitness App
 
-**ForgeFit** is a premium military-inspired fitness application built for everyone who wants to train like a soldier. Discipline. Grit. Results.
+**ForgeFit** is a complete, production-ready military-inspired fitness application. Train with discipline. Build unbreakable grit. Results that last.
 
-## ✅ Current Features (MVP v1.5)
+## ✅ Features
 
-- 💪 **Military-style workouts** (3 programs: Daily Grinder, Tactical Circuit, Elite Beast)
-- ⏱️ **Live workout timer** + tap-to-complete exercises
-- 🔐 **Authentication** (Supabase Login + Sign Up)
-- 💳 **Subscription screen** (Premium upgrade UI)
-- 🎨 Beautiful dark tactical military theme
+- **4 Bottom Tabs**: Home • Missions • History • Profile
+- **Live Workout Timer** with tap-to-complete exercises
+- **Persistent History** saved locally + synced to cloud
+- **Offline Sync** with intelligent conflict resolution (Last-Write-Wins)
+- **Visual Sync Status** indicator with pending count
+- **Supabase Authentication** (Login / Sign Up)
+- **5 Military Workouts** including Rucking and 12-Week Bootcamp Week 1
+- **Stripe Subscription** ready (just add your Payment Link)
+- **Professional Dark Tactical UI** with gold accents
 
 ## Tech Stack
 
-- React Native + Expo (Expo Router)
-- TypeScript
-- NativeWind (Tailwind CSS)
-- Supabase (Auth ready)
-- Zustand (future state)
+- React Native + Expo Router
+- TypeScript + NativeWind (Tailwind)
+- Zustand + AsyncStorage (persistent state)
+- Supabase (Auth + Database)
 
 ## Getting Started
 
-### 1. Clone & Install
-
+### 1. Clone the repo
 ```bash
 git clone https://github.com/danielawosanya-jpg/ForgeFit-MilitaryFitness.git
 cd ForgeFit-MilitaryFitness
 npm install
 ```
 
-### 2. Supabase Setup (Required for Auth)
+### 2. Add the Icons
+Place the three generated icon files in the `assets/` folder:
+- `icon.png`
+- `splash-icon.png`
+- `adaptive-icon.png`
 
-1. Go to [supabase.com](https://supabase.com) and create a new project
-2. Copy your **Project URL** and **anon public key**
-3. Create `.env` file in the root:
-
+### 3. Supabase Setup
+1. Create a project at [supabase.com](https://supabase.com)
+2. Run the SQL from `SUPABASE_SETUP.md`
+3. Create a `.env` file:
 ```env
-EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+EXPO_PUBLIC_SUPABASE_URL=your-url
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your-key
 ```
-
-4. Install Supabase client:
+4. Install packages:
 ```bash
-npx expo install @supabase/supabase-js @react-native-async-storage/async-storage react-native-url-polyfill
+npx expo install @supabase/supabase-js @react-native-async-storage/async-storage react-native-url-polyfill @react-native-community/netinfo
 ```
 
-### 3. Run the App
-
+### 4. Run the app
 ```bash
 npx expo start
 ```
 
-Scan the QR with **Expo Go**.
+## Production Build
 
-## Project Structure
-
-```
-app/
-├── index.tsx              # Home
-├── login.tsx              # Login
-├── signup.tsx             # Sign Up
-├── workouts.tsx           # Mission Briefing
-├── workout/[id].tsx       # Workout Detail
-├── workout/active/[id].tsx # Live Timer + Completion
-├── subscription.tsx       # Premium
-lib/supabase.ts            # Supabase client
+```bash
+eas build --platform all --profile production
 ```
 
-## Roadmap
+See `LAUNCH_CHECKLIST.md` for the complete launch process.
 
-- [x] Live workout timer + exercise completion
-- [x] Supabase Authentication
-- [ ] Workout history & progress saving
-- [ ] Stripe subscription payments
-- [ ] Profile & military rank system
-- [ ] More workouts & challenges
+## Built With Grit
 
-**Built with grit by Daniel & Grok**
+**ForgeFit v2.1** — Created by Daniel with Grok
 
 ---
 
