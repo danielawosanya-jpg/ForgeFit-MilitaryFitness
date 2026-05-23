@@ -1,5 +1,5 @@
 import { View, Text, ScrollView, Pressable } from 'react-native';
-import { useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, Link } from 'expo-router';
 import { workouts } from '../../data/workouts';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -33,13 +33,14 @@ export default function WorkoutDetail() {
               <Text className="text-white text-lg font-semibold">{ex.name}</Text>
               <Text className="text-[#a0aec0]">{ex.reps} • {ex.sets} sets</Text>
             </View>
-            <Ionicons name="play-circle" size={32} color="#c5a46e" />
           </View>
         ))}
 
-        <Pressable className="bg-[#c5a46e] mt-8 py-5 rounded-2xl active:opacity-90">
-          <Text className="text-[#0a0f14] text-center text-xl font-extrabold tracking-[3px]">BEGIN MISSION →</Text>
-        </Pressable>
+        <Link href={`/workout/active/${id}`} asChild>
+          <Pressable className="bg-[#c5a46e] mt-8 py-5 rounded-2xl active:opacity-90">
+            <Text className="text-[#0a0f14] text-center text-xl font-extrabold tracking-[3px]">BEGIN MISSION →</Text>
+          </Pressable>
+        </Link>
 
         <Text className="text-center text-[#4a5568] mt-6 text-xs tracking-widest">NO EXCUSES. EXECUTE.</Text>
       </View>
