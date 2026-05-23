@@ -6,16 +6,13 @@ export default function RootLayout() {
   return (
     <>
       <StatusBar style="light" />
-      <Stack
-        screenOptions={{
-          headerStyle: { backgroundColor: '#0a0f14' },
-          headerTintColor: '#fff',
-          headerTitleStyle: { fontWeight: 'bold' },
-        }}
-      >
-        <Stack.Screen name="index" options={{ title: 'FORGEFIT' }} />
-        <Stack.Screen name="workouts" options={{ title: 'WORKOUTS' }} />
-        <Stack.Screen name="subscription" options={{ title: 'SUBSCRIBE' }} />
+      <Stack screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="login" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="signup" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="subscription" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="workout/[id]" options={{ presentation: 'card' }} />
+        <Stack.Screen name="workout/active/[id]" options={{ presentation: 'fullScreenModal' }} />
       </Stack>
     </>
   );
